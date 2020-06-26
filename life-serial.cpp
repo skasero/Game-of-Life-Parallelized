@@ -12,8 +12,8 @@
 #include <string>
 #include "omp.h"
 
-#include "Timer.h"
-#include "common.h"
+#include "Timer.hpp"
+#include "common.hpp"
 
 using namespace std;
 

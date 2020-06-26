@@ -1,3 +1,13 @@
+/**
+ * 
+ * Conway's Game of Life Serial Implementation
+ * Authors: Jonathan Lee & Spencer Kase Rohlfing
+ * 
+ **/
+
+/**
+ * ================ HEADERS ================
+ **/
 #include <iostream>
 #include <string>
 #include "omp.h"
@@ -6,6 +16,10 @@
 
 using namespace std;
 
+
+/**
+ * ================ Life Class ================
+ **/
 class Life {
     public:
         Life ();
@@ -40,6 +54,10 @@ class Life {
         int generation;
 };
 
+/**
+ * Life()
+ * Default Constructor and should probably never be used.
+ **/
 Life::Life() {
     xsize = 0;
     ysize = 0;
@@ -47,6 +65,11 @@ Life::Life() {
     generation = 0;
 }
 
+/**
+ * Life()
+ * Parameterized Constructor.
+ * Sets the grid size of the board along with allocating memory for the entire grid size.
+ **/
 Life::Life(const int xsize, const int ysize) {
     this->xsize = xsize;
     this->ysize = ysize;
@@ -61,6 +84,10 @@ Life::Life(const int xsize, const int ysize) {
     }
 }
 
+/**
+ * Life()
+ * Copy Constructor and probably will never be used.
+ **/
 Life::Life(const Life &other) {
     this->~Life();
     this->xsize = other.xsize;
@@ -76,6 +103,10 @@ Life::Life(const Life &other) {
     }
 }
 
+/**
+ * ~Life()
+ * Destructor to delete all allocated memory in the grid
+ **/
 Life::~Life() {
     for (int i = 0; i < xsize; i++) {
         delete cells[i];
@@ -88,18 +119,35 @@ Life::~Life() {
     cells = nullptr;
 }
 
+/**
+ * setCell()
+ * Sets the current cell the specified status. 
+ **/
 void Life::setCell(bool status, int row, int col) {
     cells[row][col] = status;
 }
 
+/**
+ * getCell()
+ * returned the value of the cell.
+ **/
 bool Life::getCell(int row, int col) const{
     return cells[row][col];
 }
 
+/**
+ * toggleCell()
+ * Switches the value of the cell.
+ **/
 void Life::toggleCell(int row, int col) {
     cells[row][col] = !cells[row][col];
 }
 
+/**
+ * randomize()
+ * Used to randomly assign values to the cell on a board with default threshold of 0.5. 
+ * Or about 50% of the cells will be alive.
+ **/
 void Life::randomize(double threshold = 0.5) {
     for (int i = 0; i < xsize; i++) {
         for (int j = 0; j < ysize; j++) {
@@ -108,7 +156,11 @@ void Life::randomize(double threshold = 0.5) {
     }
 }
 
-void Life::step (const int generations = 1) {
+/**
+ * step()
+ * Used to calculate the number of generations specified updating the board.
+ **/
+void Life::step(const int generations = 1) {
     for (int step = 0; step < generations; step++) {
         bool** prevGeneration = cells;
         cells = getNextGeneration();

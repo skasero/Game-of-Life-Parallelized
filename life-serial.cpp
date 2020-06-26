@@ -13,6 +13,7 @@
 #include "omp.h"
 
 #include "Timer.h"
+#include "common.h"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ class Life {
         Life (const Life &other);
         ~Life();
 
-        void randomize(double threshold);
+        void randomize(float threshold);
 
         void setCell(bool alive, int row, int col);
         bool getCell(int row, int col) const;
@@ -148,10 +149,10 @@ void Life::toggleCell(int row, int col){
  * Used to randomly assign values to the cell on a board with default threshold of 0.5. 
  * Or about 50% of the cells will be alive.
  **/
-void Life::randomize(double threshold = 0.5){
+void Life::randomize(float threshold = 0.5){
     for (int i = 0; i < xsize; i++){
         for (int j = 0; j < ysize; j++){
-            cells[i][j] = ((double) rand() / (RAND_MAX)) < threshold ? true : false;
+            cells[i][j] = ((float) rand() / (RAND_MAX)) < threshold ? true : false;
         }
     }
 }
@@ -291,20 +292,31 @@ void Life::resetGeneration(){
  **/
 
 int main(int argc, char **argv){
-    int size;
-    if(argc == 1){
-        size = 1000;
-    }else{
-        size = atoi(argv[1]);
+    if(find_option(argc, argv, "-h") >= 0){
+        cout << "Usage:" << endl
+            << "-h to see usage" << endl
+            << "-n <int> for the number of generations. Default is 10"
+            << "-x <int> for X grid size. Default is 25" << endl
+            << "-y <int> for Y grid size. Default is 25" << endl
+            << "-p <int> (0-100) for percent of alive cells. Default is 50%" << endl
+            << "-d debug mode allows the user to iterate over each generation manually. This inherents -v"
+            << "-v verbose mode that print the board after each generation. Default this is disabled" << endl;
+        return 0;
     }
-    Life* newLife = new Life(size, size);
-    newLife -> randomize();
+    
+    int nGens = read_int(argc, argv, "-n", 10);
+    int xsize = read_int(argc, argv, "-x", 25);
+    int ysize = read_int(argc, argv, "-y", 25);
+    float percent = read_int(argc, argv, "-p", 50) / 100;
+    
+    Life* newLife = new Life(xsize, ysize);
+    newLife -> randomize(percent);
     string input = "";
 
     Timer timer;
     timer.start();
     // while (input != "x"){
-    while (newLife -> getGeneration() < 200){
+    while (newLife -> getGeneration() < nGens){
         // cout << "Generation #" << newLife -> getGeneration() << endl;
         // for (int lines = 0; lines < newLife -> getXSize(); lines++ )
         //     cout << "--";
